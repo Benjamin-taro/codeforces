@@ -1,0 +1,210 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <iostream>
+#include <vector>
+#include <string>
+#include <utility>
+#include <queue>
+#include <array>
+#include <climits>
+#include <cmath>
+#include <set>
+#include <map>
+#include <bitset>
+#include <deque>
+#include <numeric>
+#include <assert.h>
+#include <stack>
+#include <unordered_map>
+#include <type_traits> // For std::is_floating_point
+#include <cmath> // For std::ceil
+#include <cstring>
+#define REP(i, n) for (int64_t i = 0; (i) < (int64_t)(n); ++ (i))
+#define REP3(i, m, n) for (int64_t i = (m); (i) < (int64_t)(n); ++ (i))
+#define REP_R(i, n) for (int64_t i = (int64_t)(n) - 1; (i) >= 0; -- (i))
+#define REP3R(i, m, n) for (int64_t i = (int64_t)(n) - 1; (i) >= (int64_t)(m); -- (i))
+#define ALL(x) ::std::begin(x), ::std::end(x)
+using namespace std;
+//文字配列の二次元配列みたいなやつを回転させる。
+vector<string> rotate90(const vector<string>& matrix) {
+    int64_t n = matrix.size();
+    int64_t m = matrix[0].size();
+    vector<string> rotated(m, string(n, '.'));
+    for (int64_t i = 0; i < n; ++i) {
+        for (int64_t j = 0; j < m; ++j) {
+            rotated[j][n - 1 - i] = matrix[i][j];
+        }
+    }
+    return rotated;
+}
+
+// Data structures and algorithms for disjoint set union problems
+struct dsu {
+  public:
+    dsu() : _n(0) {}
+    explicit dsu(int64_t n) : _n(n), parent_or_size(n, -1) {}
+
+    int64_t merge(int64_t a, int64_t b) {
+        assert(0 <= a && a < _n);
+        assert(0 <= b && b < _n);
+        int64_t x = leader(a), y = leader(b);
+        if (x == y) return x;
+        if (-parent_or_size[x] < -parent_or_size[y]) std::swap(x, y);
+        parent_or_size[x] += parent_or_size[y];
+        parent_or_size[y] = x;
+        return x;
+    }
+
+    bool same(int64_t a, int64_t b) {
+        assert(0 <= a && a < _n);
+        assert(0 <= b && b < _n);
+        return leader(a) == leader(b);
+    }
+
+    int64_t leader(int64_t a) {
+        assert(0 <= a && a < _n);
+        if (parent_or_size[a] < 0) return a;
+        return parent_or_size[a] = leader(parent_or_size[a]);
+    }
+
+    int64_t size(int64_t a) {
+        assert(0 <= a && a < _n);
+        return -parent_or_size[leader(a)];
+    }
+
+    std::vector<std::vector<int64_t>> groups() {
+        std::vector<int64_t> leader_buf(_n), group_size(_n);
+        for (int64_t i = 0; i < _n; i++) {
+            leader_buf[i] = leader(i);
+            group_size[leader_buf[i]]++;
+        }
+        std::vector<std::vector<int64_t>> result(_n);
+        for (int64_t i = 0; i < _n; i++) {
+            result[i].reserve(group_size[i]);
+        }
+        for (int64_t i = 0; i < _n; i++) {
+            result[leader_buf[i]].push_back(i);
+        }
+        result.erase(
+            std::remove_if(result.begin(), result.end(),
+                           [&](const std::vector<int64_t>& v) { return v.empty(); }),
+            result.end());
+        return result;
+    }
+
+  private:
+    int64_t _n;
+    // root node: -1 * component size
+    // otherwise: parent
+    std::vector<int64_t> parent_or_size;
+};
+
+//listing the prime numbers until N
+vector<int64_t> findPrimes(int64_t N) {
+    vector<bool> isPrime(N + 1, true);
+    isPrime[0] = isPrime[1] = false;
+    for (int64_t i = 2; i * i <= N; ++i) {
+        if (isPrime[i]) {
+            for (int64_t j = i * i; j <= N; j += i) {
+                isPrime[j] = false;
+            }
+        }
+    }
+    vector<int64_t> primes;
+    for (int64_t i = 2; i <= N; ++i) {
+        if (isPrime[i]) primes.push_back(i);
+    }
+    return primes;
+}
+
+//Checking given number is prime or not
+bool IsPrime(int64_t num)
+{
+    if (num < 2) return false;
+    else if (num == 2) return true;
+    else if (num % 2 == 0) return false; // 偶数はあらかじめ除く
+
+    double sqrtNum = sqrt(num);
+    for (int64_t i = 3; i <= sqrtNum; i += 2)
+    {
+        if (num % i == 0)
+        {
+            // 素数ではない
+            return false;
+        }
+    }
+    return true;
+}
+
+int findMaxTriangles(int y, int currentIndex, const vector<int64_t>& a, const vector<int64_t>& differences, unordered_map<int, unordered_map<int, int>>& memo) {
+    if (currentIndex >= differences.size() || y == 0) {
+        return 0; // ベースケース
+    }
+    if (memo.find(y) != memo.end() && memo[y].find(currentIndex) != memo[y].end()) {
+        return memo[y][currentIndex]; // メモに結果があれば返す
+    }
+
+    int maxTriangles = 0;
+
+    // ギャップを埋める
+    if (differences[currentIndex] <= y) {
+        // ギャップを完全に埋めることができる場合
+        int usedY = differences[currentIndex]; // このギャップを埋めるのに使用するy
+        int newTriangles = 1; // このギャップを埋めることで形成される新しい三角形
+        maxTriangles = max(maxTriangles, newTriangles + findMaxTriangles(y - usedY, currentIndex + 1, a, differences, memo));
+    } 
+
+    // このギャップをスキップする
+    maxTriangles = max(maxTriangles, findMaxTriangles(y, currentIndex + 1, a, differences, memo));
+
+    memo[y][currentIndex] = maxTriangles; // 結果をメモに保存
+    return maxTriangles;
+}
+
+
+
+// generated by oj-template v4.8.1 (https://github.com/online-judge-tools/template-generator)
+int main() {
+    int64_t t;
+    cin >> t;
+    REP (o, t){
+        int64_t n, x, y;
+        cin >> n >> x >> y;
+        vector<int64_t> a(x);
+        for (int64_t& vertex : a) {
+            cin >> vertex;
+        }
+        sort(a.begin(), a.end());
+        vector<int64_t> differences;
+        for (int i = 1; i < a.size(); ++i) {
+            differences.push_back(a[i] - a[i-1]-1);
+        }
+        differences.push_back(a[0] + n - a[x-1]-1);
+        REP(i, differences.size()){
+            cout << differences[i] << " ";
+        }
+        // 内部の三角形の数は x - 2
+        int64_t triangles = x - 2;
+        // 外側の三角形の数をカウントする
+        int64_t outerTriangles = 0;
+        outerTriangles = count(ALL(differences), 1);
+        while (y > 0 && !differences.empty()) {
+            // 最大のギャップを見つける
+            auto max_gap_it = max_element(differences.begin(), differences.end());
+            int64_t max_gap = *max_gap_it;
+
+            if (max_gap == 1) {
+                // これ以上埋めるギャップがない場合
+                break;
+            }
+            
+
+        }
+
+        cout << triangles + outerTriangles << endl;
+    }
+    
+    return 0;
+}
