@@ -8,6 +8,8 @@
         "string": "cpp",
         "queue": "cpp",
         "random": "cpp",
-        "ios": "cpp"
+        "ios": "cpp",
+        "map": "cpp",
+        "set": "cpp"
     }
 }
