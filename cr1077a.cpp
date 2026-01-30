@@ -157,5 +157,27 @@ int main() {
     std::ios::sync_with_stdio(false);
     std::cin.tie(nullptr);
 
+    int64_t t; cin >> t;
+    while(t--){
+        int64_t n; cin >> n;
+        vector<int64_t> ans(n);
+        int64_t left = 1, right = n;
+        for(int64_t i = 0; i < n; i++){
+            if(i%2 == 1){
+                ans[i] = left;
+                left++;
+            } else {
+                ans[i] = right;
+                right--;
+            }
+        }
+        reverse(ALL(ans));
+        for(int64_t i = 0; i < n; i++){
+            cout << ans[i] << " ";
+        }
+        cout << "\n";
+    }
+
+
     return 0;    
 }

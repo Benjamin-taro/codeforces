@@ -157,5 +157,33 @@ int main() {
     std::ios::sync_with_stdio(false);
     std::cin.tie(nullptr);
 
-    return 0;    
+    int t; 
+    cin >> t;
+    while (t--) {
+        int64_t n; cin >> n;
+        vector<int64_t> a(n);
+        int64_t INF = 1e18;
+        int64_t minv = INF, maxv = -INF;
+        REP(i, n) {
+            cin >> a[i];
+            minv = min(minv, a[i]);
+            maxv = max(maxv, a[i]);
+        }
+        vector<int64_t> a_sorted = a;;
+        sort(ALL(a_sorted));
+        int64_t ans = INF;
+        if(a == a_sorted) {
+            cout << -1 << "\n";
+            continue;
+        }
+        else{
+            for(int64_t i = 0; i < n; i++){
+                if(a[i] != a_sorted[i]){
+                    ans = min(ans, max(abs(a[i] - minv), abs(a[i] - maxv)));
+                }
+            }
+        }
+        cout << ans << "\n";
+    }
+    return 0;
 }

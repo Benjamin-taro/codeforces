@@ -157,5 +157,60 @@ int main() {
     std::ios::sync_with_stdio(false);
     std::cin.tie(nullptr);
 
-    return 0;    
+    int t; 
+    cin >> t;
+    while (t--) {
+        int64_t x, y;
+        cin >> x >> y;
+        const int64_t INF = 1LL << 60;
+        int64_t ans = INF;
+        pair<int64_t, int64_t> output = {INF, INF};
+        //x-p = 0
+        {
+            int64_t q1 = 0;
+            int64_t max_bit = 0;//最高位の位置
+            for (int bit = 0; (1LL << bit) <= x; bit++) {
+                if (!((x >> bit) & 1)) { // xのbitが0
+                    q1 += (1LL << bit);
+                }
+                else{
+                    max_bit = bit;
+                }
+            }
+            int64_t q2 = q1 + (1LL << (max_bit + 1));
+            if(ans > abs(y - q1)){
+                ans = abs(y - q1);
+                output = {x, q1};
+            }
+            if(ans > abs(y - q2)){
+                ans = abs(y - q2);
+                output = {x, q2};
+            }
+        }
+        //y-p = 0
+        {
+            int64_t p1 = 0;
+            int64_t max_bit = 0;//最高位の位置
+            for (int bit = 0; (1LL << bit) <= y; bit++) {
+                if (!((y >> bit) & 1)) { // yのbitが0
+                    p1 += (1LL << bit);
+                }
+                else{
+                    max_bit = bit;
+                }
+            }
+            int64_t p2 = p1 + (1LL << (max_bit + 1));
+            if(ans > abs(x - p1)){
+                ans = abs(x - p1);
+                output = {p1, y};
+            }
+            if(ans > abs(x - p2)){
+                ans = abs(x - p2);
+                output = {p2, y};
+            }
+        }
+
+        cout << output.first << " " << output.second << "\n";
+    }
+    return 0;
 }

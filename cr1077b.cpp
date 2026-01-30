@@ -157,5 +157,47 @@ int main() {
     std::ios::sync_with_stdio(false);
     std::cin.tie(nullptr);
 
-    return 0;    
+    int t; 
+    cin >> t;
+    while (t--) {
+        int n;
+        string s;
+        cin >> n >> s;
+
+        int ones = 0;
+        for (char c : s) if (c == '1') ones++;
+
+        // 全部0
+        if (ones == 0) {
+            cout << (n + 2) / 3 << "\n";
+            continue;
+        }
+
+        long long add = 0;
+
+        int i = 0;
+        while (i < n) {
+            if (s[i] == '1') { i++; continue; }
+
+            int j = i;
+            while (j < n && s[j] == '0') j++;
+            int L = j - i;               // 0-run length
+            int m;
+
+            if (i == 0 || j == n) {
+                // 端に接している 0-run
+                m = L - 1;
+            } else {
+                // 1 に挟まれている 0-run
+                m = L - 2;
+            }
+
+            if (m > 0) add += (m + 2) / 3;
+
+            i = j;
+        }
+
+        cout << ones + add << "\n";
+    }
+    return 0;
 }
