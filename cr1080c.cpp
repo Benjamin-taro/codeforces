@@ -161,16 +161,28 @@ int main() {
     while(t--){
         int64_t n;
         cin >> n;
-        bool ans = false;
-        REP(i, n){
-            int64_t a;
-            cin >> a;
-            if(a%67==0){
-                ans = true;
+        vector<int64_t> a(n);
+        REP(i,n){
+            cin >> a[i];
+        }
+        int64_t ans = 0;
+        int64_t idx = 0;
+        while(idx < n-1){
+            if(a[idx]==a[idx+1] || a[idx]+a[idx+1] == 7){
+                if(idx < n-2 && (a[idx+1]==a[idx+2] || a[idx+1]+a[idx+2] == 7)){
+                    ans++;
+                    idx+=2;
+                }
+                else{
+                    ans++;
+                    idx++;
+                }
+            }
+            else{
+                idx++;
             }
         }
-        if(ans) cout << "YES" << "\n";
-        else cout << "NO" << "\n"; 
+        cout << ans << "\n";
     }
 
     return 0;    

@@ -161,16 +161,25 @@ int main() {
     while(t--){
         int64_t n;
         cin >> n;
-        bool ans = false;
-        REP(i, n){
-            int64_t a;
-            cin >> a;
-            if(a%67==0){
-                ans = true;
-            }
+        vector<int64_t> f(n);
+        REP(i,n){
+            cin >> f[i];
         }
-        if(ans) cout << "YES" << "\n";
-        else cout << "NO" << "\n"; 
+        int64_t sum = 0;
+        sum = (f[0]+f[n-1])/(n-1);
+        vector<int64_t> ans(n, 0);
+        int64_t prep_sum = 0;
+        ans[0] = (f[1]-f[0]+sum)/2;
+        prep_sum += ans[0];
+        for(int64_t i = 1; i < n-1; i++){
+            ans[i] = ((f[i+1]-f[i])-(f[i]-f[i-1]))/2;
+            prep_sum += ans[i];
+        }
+        ans[n-1] = sum-prep_sum;
+        REP(i, n){
+            cout << ans[i] << " ";
+        }
+        cout << "\n";
     }
 
     return 0;    

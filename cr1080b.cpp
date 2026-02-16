@@ -161,16 +161,30 @@ int main() {
     while(t--){
         int64_t n;
         cin >> n;
-        bool ans = false;
-        REP(i, n){
-            int64_t a;
-            cin >> a;
-            if(a%67==0){
-                ans = true;
+        vector<int64_t> a(n+1);
+        for(int64_t i = 1; i <= n; i++){
+            cin >> a[i];
+        }
+        vector<vector<int64_t>> chain(n+1);
+        for(int64_t i = 1; i <= n; i++){
+            int64_t target = i;
+            while(target%2 == 0) target /= 2;
+            chain[target].push_back(i);
+        }
+        bool ans = true;
+        for(auto vals:chain){
+            if(vals.empty()) continue;
+            vector<int64_t> actual_vals;
+            for(auto v:vals) actual_vals.push_back(a[v]);
+            sort(ALL(vals));
+            sort(ALL(actual_vals));
+            if(vals != actual_vals){
+                ans = false;
+                break;
             }
         }
-        if(ans) cout << "YES" << "\n";
-        else cout << "NO" << "\n"; 
+        if(ans) cout << "YES" << endl;
+        else cout << "NO" << endl;
     }
 
     return 0;    
